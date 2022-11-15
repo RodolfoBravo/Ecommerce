@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-
 class Confirmation extends Component {
     renderOrderSummary() {
         const { order, onBackToHome } = this.props;
@@ -26,8 +25,7 @@ class Confirmation extends Component {
                         to="/"
                         onClick={onBackToHome}
                     >
-                        <i class="fa-solid fa-arrow-left"></i>
-                        <span>Back to home</span>
+                        <span><i class="fa-solid fa-turn-down-left"></i>Back to home</span>
                     </Link>
                 </div>
             </div>

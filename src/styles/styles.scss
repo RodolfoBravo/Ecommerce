@@ -41,16 +41,17 @@ hr {
         }
 
         .cart-item {
-            button{
+            button {
                 width: 2rem;
                 height: 2rem;
             }
-            p{
+
+            p {
                 font-size: .8rem;
                 margin-right: 20px;
             }
-           
-            
+
+
         }
     }
 
@@ -426,10 +427,38 @@ h2::after {
 }
 
 
+.checkout {
+    .checkout_list {
+        width: 20rem;
+        background-color: #fff;
+        border: 2px solid #292b83;
+        display: fixed;
+        z-index: 1;
+        top: 10rem;
+        right: 1.25rem;
+        height: auto;
+        position: fixed;
+
+        .checkout__heading {
+            height: 2rem;
+        }
+
+        .checkout-item {
+            button {
+                width: 2rem;
+                height: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+                margin-right: 20px;
+            }
 
 
+        }
+    }
 
-
+}
 
 
 

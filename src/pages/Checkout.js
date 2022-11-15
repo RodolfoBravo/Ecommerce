@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { commerce } from './lib/Commerce';
+import commerce from '../lib/Commerce';
+import { Link } from 'react-router-dom';
 
 class Checkout extends Component {
     constructor(props) {
@@ -15,10 +16,10 @@ class Checkout extends Component {
             // Shipping details
             shippingName: 'Jane Doe',
             shippingStreet: '123 Fake St',
-            shippingCity: 'San Francisco',
-            shippingStateProvince: 'CA',
-            shippingPostalZipCode: '94107',
-            shippingCountry: 'US',
+            shippingCity: '',
+            shippingStateProvince: '',
+            shippingPostalZipCode: '',
+            shippingCountry: '',
             // Payment details
             cardNum: '4242 4242 4242 4242',
             expMonth: '11',
@@ -138,25 +139,25 @@ class Checkout extends Component {
             });
     };
 
-    handleFormChanges(event) {
+    handleFormChanges(e) {
         this.setState({
-            [event.target.name]: event.target.value,
+            [e.target.name]: e.target.value,
         });
     };
 
-    handleShippingCountryChange(event) {
-        const currentValue = event.target.value;
+    handleShippingCountryChange(e) {
+        const currentValue = e.target.value;
         this.fetchSubdivisions(currentValue);
     };
 
-    handleSubdivisionChange(event) {
-        const currentValue = event.target.value;
+    handleSubdivisionChange(e) {
+        const currentValue = e.target.value;
         this.fetchShippingOptions(this.state.checkoutToken.id, this.state.shippingCountry, currentValue)
     }
 
-    handleCaptureCheckout(event) {
+    handleCaptureCheckout(e) {
         const { cart } = this.props;
-        event.preventDefault();
+        e.preventDefault();
         const orderData = {
             line_items: this.sanitizedLineItems(cart.line_items),
             customer: {
@@ -189,105 +190,151 @@ class Checkout extends Component {
         this.props.onCaptureCheckout(this.state.checkoutToken.id, orderData);
         this.props.history.push('/confirmation');
     };
-
     renderCheckoutForm() {
         const { shippingCountries, shippingSubdivisions, shippingOptions } = this.state;
 
+
         return (
-            <form className="checkout__form" onChange={this.handleFormChanges}>
-                <h4 className="checkout__subheading">Customer information</h4>
+            <div className='col-lg-10 col-xl-9 mx-auto mb-5'>
+                <form className="checkout__form" onChange={this.handleFormChanges}>
 
-                <label className="checkout__label" htmlFor="firstName">First name</label>
-                <input className="checkout__input" type="text" onChange={this.handleFormChanges} value={this.state.firstName} name="firstName" placeholder="Enter your first name" required />
+                    <div className='row'>
+                        <h4 className="checkout__subheading">Customer information</h4>
+                        <div className="col-md-4 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.firstName} name="firstName" placeholder="Enter your first name" required />
+                            <label htmlFor="firstName">First name</label>
+                        </div>
+                        <div className="col-md-4 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.lastName} name="lastName" placeholder="Enter your last name" required />
+                            <label htmlFor="lastName">Last name</label>
+                        </div>
+                        <div className="col-md-4 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.email} name="email" placeholder="Enter your email" required />
+                            <label htmlFor="email">Email</label>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <h4 className="checkout__subheading">Shipping details</h4>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.shippingName} name="shippingName" placeholder="Enter your full name" required />
+                            <label htmlFor="shippingName">Full name</label>
+                        </div>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.shippingStreet} name="shippingStreet" placeholder="Enter your street address" required />
+                            <label htmlFor="shippingStreet">Street address</label>
+                        </div>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.shippingCity} name="shippingCity" placeholder="Enter your city" required />
+                            <label htmlFor="shippingCity">City</label>
+                        </div>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.shippingPostalZipCode} name="shippingPostalZipCode" placeholder="Enter your postal/zip code" required />
+                            <label htmlFor="shippingPostalZipCode">Postal/Zip code</label>
+                        </div>
+                        <select
+                            value={this.state.shippingCountry}
+                            name="shippingCountry"
+                            onChange={this.handleShippingCountryChange}
+                            className="checkout__select"
+                        >
+                            <option disabled>Country</option>
+                            {
+                                Object.keys(shippingCountries).map((index) => {
+                                    return (
+                                        <option value={index} key={index}>{shippingCountries[index]}</option>
+                                    );
+                                })
+                            };
+                        </select>
+                        <div className="col-md-6 form-floating mb-3">
+                            <select
+                                value={this.state.shippingCountry}
+                                name="shippingCountry"
+                                onChange={this.handleShippingCountryChange}
+                                className="form-select"
 
-                <label className="checkout__label" htmlFor="lastName">Last name</label>
-                <input className="checkout__input" type="text" onChange={this.handleFormChanges} value={this.state.lastName} name="lastName" placeholder="Enter your last name" required />
+                            >
+                                <option disabled>Country</option>
 
-                <label className="checkout__label" htmlFor="email">Email</label>
-                <input className="checkout__input" type="text" onChange={this.handleFormChanges} value={this.state.email} name="email" placeholder="Enter your email" required />
+                                {
+                                    Object.keys(shippingCountries).map((index) => {
+                                        return (
+                                            <option value={index} key={index}>{shippingCountries[index]}</option>
+                                        );
+                                    })
+                                };
+                            </select>
+                        </div>
+                        <div className='col-md-6 form-floating mb-3'>
+                            <select
+                                value={this.state.shippingStateProvince}
+                                name="shippingStateProvince"
+                                onChange={this.handleSubdivisionChange}
+                                className="form-select"
+                                aria-label="Default select example"
+                            >
+                                <option className="checkout__option" value>State/province</option>
+                                {
+                                    Object.keys(shippingSubdivisions).map((index) => {
+                                        return (
+                                            <option value={index} key={index}>{shippingSubdivisions[index]}</option>
+                                        );
+                                    })
+                                };
 
-                <h4 className="checkout__subheading">Shipping details</h4>
+                            </select>
+                        </div>
+                        <div className='col-md-6 form-floating mb-3'>
+                            <select
+                                value={this.state.shippingOption.id}
+                                name="shippingOption"
+                                onChange={this.handleFormChanges}
+                                className="form-select"
+                            >
+                                <option className="checkout__select-option" disabled>Select a shipping method</option>
+                                {console.log(shippingOptions)}
+                                {
+                                    shippingOptions.map((method, index) => {
+                                        return (
+                                            <option className="checkout__select-option" value={method.id} key={index}>{`${method.description} - $${method.price.formatted_with_code}`}</option>
+                                        );
+                                    })
+                                };
+                            </select>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <h4 className="checkout__subheading">Payment information</h4>
 
-                <label className="checkout__label" htmlFor="shippingName">Full name</label>
-                <input className="checkout__input" type="text" onChange={this.handleFormChanges} value={this.state.shippingName} name="shippingName" placeholder="Enter your shipping full name" required />
-
-                <label className="checkout__label" htmlFor="shippingStreet">Street address</label>
-                <input className="checkout__input" type="text" onChange={this.handleFormChanges} value={this.state.shippingStreet} name="shippingStreet" placeholder="Enter your street address" required />
-
-                <label className="checkout__label" htmlFor="shippingCity">City</label>
-                <input className="checkout__input" type="text" onChange={this.handleFormChanges} value={this.state.shippingCity} name="shippingCity" placeholder="Enter your city" required />
-
-                <label className="checkout__label" htmlFor="shippingPostalZipCode">Postal/Zip code</label>
-                <input className="checkout__input" type="text" onChange={this.handleFormChanges} value={this.state.shippingPostalZipCode} name="shippingPostalZipCode" placeholder="Enter your postal/zip code" required />
-
-                <label className="checkout__label" htmlFor="shippingCountry">Country</label>
-                <select
-                    value={this.state.shippingCountry}
-                    name="shippingCountry"
-                    onChange={this.handleShippingCountryChange}
-                    className="checkout__select"
-                >
-                    <option disabled>Country</option>
-                    {
-                        Object.keys(shippingCountries).map((index) => {
-                            return (
-                                <option value={index} key={index}>{shippingCountries[index]}</option>
-                            );
-                        })
-                    };
-                </select>
-
-                <label className="checkout__label" htmlFor="shippingStateProvince">State/province</label>
-                <select
-                    value={this.state.shippingStateProvince}
-                    name="shippingStateProvince"
-                    onChange={this.handleSubdivisionChange}
-                    className="checkout__select"
-                >
-                    <option className="checkout__option" disabled>State/province</option>
-                    {
-                        Object.keys(shippingSubdivisions).map((index) => {
-                            return (
-                                <option value={index} key={index}>{shippingSubdivisions[index]}</option>
-                            );
-                        })
-                    };
-
-                </select>
-
-                <label className="checkout__label" htmlFor="shippingOption">Shipping method</label>
-                <select
-                    value={this.state.shippingOption.id}
-                    name="shippingOption"
-                    onChange={this.handleFormChanges}
-                    className="checkout__select"
-                >
-                    <option className="checkout__select-option" disabled>Select a shipping method</option>
-                    {
-                        shippingOptions.map((method, index) => {
-                            return (
-                                <option className="checkout__select-option" value={method.id} key={index}>{`${method.description} - $${method.price.formatted_with_code}`}</option>
-                            );
-                        })
-                    };
-                </select>
-
-                <h4 className="checkout__subheading">Payment information</h4>
-
-                <label className="checkout__label" htmlFor="cardNum">Credit card number</label>
-                <input className="checkout__input" type="text" name="cardNum" onChange={this.handleFormChanges} value={this.state.cardNum} placeholder="Enter your card number" />
-
-                <label className="checkout__label" htmlFor="expMonth">Expiry month</label>
-                <input className="checkout__input" type="text" name="expMonth" onChange={this.handleFormChanges} value={this.state.expMonth} placeholder="Card expiry month" />
-
-                <label className="checkout__label" htmlFor="expYear">Expiry year</label>
-                <input className="checkout__input" type="text" name="expYear" onChange={this.handleFormChanges} value={this.state.expYear} placeholder="Card expiry year" />
-
-                <label className="checkout__label" htmlFor="ccv">CCV</label>
-                <input className="checkout__input" type="text" name="ccv" onChange={this.handleFormChanges} value={this.state.ccv} placeholder="CCV (3 digits)" />
-
-                <button onClick={this.handleCaptureCheckout} className="checkout__btn-confirm">Confirm order</button>
-            </form>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.cardNum} name="cardNum" placeholder="Enter your card number" required />
+                            <label htmlFor="cardNum">Credit card number</label>
+                        </div>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.expMonth} name="expMonth" placeholder="Card expiry month" required />
+                            <label htmlFor="expMonth">Expiry month</label>
+                        </div>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.expYear} name="expYear" placeholder="Card expiry year" required />
+                            <label htmlFor="expYear">Credit card number</label>
+                        </div>
+                        <div className="col-md-6 form-floating mb-3">
+                            <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.ccv} name="ccv" placeholder="CCV (3 digits)" required />
+                            <label htmlFor="ccv">Credit card number</label>
+                        </div>
+                    </div>
+                    <div className='row d-flex justify-content-center mx-2'>
+                        <Link
+                            className="col-4 btn btn-outline-dark checkout__btn-confirm mx-1"
+                            type="button"
+                            to="/"
+                        >
+                            <span><i className="fa-solid fa-turn-down-left"></i>Back to home</span>
+                        </Link>
+                        <button onClick={this.handleCaptureCheckout} className="col-4 btn btn-outline-dark checkout__btn-confirm mx-1">Confirm order</button>
+                    </div>
+                </form>
+            </div>
         );
     };
 
@@ -296,16 +343,17 @@ class Checkout extends Component {
 
         return (
             <>
-                <div className="checkout__summary">
-                    <h4>Order summary</h4>
+                <div className="checkout_list">
+                    <h4 className='checkout__heading'>Order summary</h4>
+                    {/*console.log(cart.line_items)*/}
                     {cart.line_items.map((lineItem) => (
-                        <>
-                            <div key={lineItem.id} className="checkout__summary-details">
-                                <img className="checkout__summary-img" src={lineItem.media.source} alt={lineItem.name} />
-                                <p className="checkout__summary-name">{lineItem.quantity} x {lineItem.name}</p>
-                                <p className="checkout__summary-value">{lineItem.line_total.formatted_with_symbol}</p>
-                            </div>
-                        </>
+                        <div key={lineItem.id} className="checkout-item d-flex flex-row align-items-center justify-content-between">
+                            <img className="img-fluid rounded-3" src={lineItem.media.source} alt={lineItem.name} style={{ width: "8rem" }} />
+                            <p className="checkout__summary-name">{lineItem.quantity} x {lineItem.name}</p>
+                            <p className="checkout__summary-value">{lineItem.line_total.formatted_with_symbol}</p>
+
+                        </div>
+
                     ))}
                     <div className="checkout__summary-total">
                         <p className="checkout__summary-price">
@@ -320,13 +368,17 @@ class Checkout extends Component {
 
     render() {
         return (
-            <div className="checkout">
+            <div className="container-fluid checkout">
                 <h2 className="checkout__heading">
                     Checkout
                 </h2>
-                <div className="checkout__wrapper">
-                    {this.renderCheckoutForm()}
-                    {this.renderCheckoutSummary()}
+                <div className="row">
+                    <div className='col-sm-4 col-md-6 col-lg-9'>
+                        {this.renderCheckoutForm()}
+                    </div>
+                    <div className='col-sm-4 col-md-6 col-lg-3'>
+                        {this.renderCheckoutSummary()}
+                    </div>
                 </div>
             </div>
         );

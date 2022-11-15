@@ -48,10 +48,10 @@ const Cart = ({ cart, onRemoveFromCart, onEmptyCart, onUpdateCartQty }) => {
       {renderEmptyMessage()}
       {renderItems()}
       {renderTotal()}
-      <div className="cart__footer">
-        <button className="cart__btn-empty" onClick={handleEmptyCart}>Empty cart</button>
+      <div className="cart__footer d-flex justify-content-center my-2">
+        <button className="cart__btn-empty btn btn-outline-dark mx-2" onClick={handleEmptyCart}>Empty cart</button>
         <Link
-          className="cart__btn-checkout"
+          className="cart__btn-checkout btn btn-outline-dark mx-2"
           to="/checkout"
         >
           Checkout
