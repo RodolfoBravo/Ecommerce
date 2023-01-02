@@ -35,6 +35,7 @@ class App extends Component {
     this.fetchCart();
     this.loadOrderFromLocalStorage();
   }
+
   /**
    * Fetch a saved order receipt from local storage so we can show the confirmation page
    * again between page refreshes.
@@ -166,7 +167,8 @@ class App extends Component {
 
 
 
-  render() {
+
+  render(props) {
     const {
       products,
       merchant,
@@ -184,12 +186,14 @@ class App extends Component {
             element={
               <>
                 <CartNav
+                  {...props}
                   cart={this.state.cart}
                   onUpdateCartQty={this.handleUpdateCartQty}
                   onRemoveFromCart={this.handleRemoveFromCart}
                   onEmptyCart={this.handleEmptyCart}
                 />
                 <ProductsList
+                  {...props}
                   products={this.state.products}
                   onAddToCart={this.handleAddToCart}
                 />
@@ -199,6 +203,7 @@ class App extends Component {
             path="/checkout"
             element={
               <Checkout
+                {...props}
                 cart={this.state.cart}
                 onCaptureCheckout={this.handleCaptureCheckout}
               />

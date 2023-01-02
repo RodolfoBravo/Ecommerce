@@ -74,13 +74,19 @@ class Checkout extends Component {
         const { cart } = this.props;
         if (cart.line_items.length) {
             return commerce.checkout.generateToken(cart.id, { type: 'cart' })
-                .then((token) => this.setState({ checkoutToken: token }))
-                .then(() => this.fetchShippingCountries(this.state.checkoutToken.id))
-                .catch((error) => {
+                .then((checkout) => {
+                    this.setState({
+                        checkoutToken: checkout
+                    })
+                }).then(() => {
+                    this.fetchShippingCountries(this.state.checkoutToken.id)
+                }).catch((error) => {
                     console.log('There was an error in generating a token', error);
                 });
         }
     };
+
+
 
     /**
      * Fetches a list of countries available to ship to checkout token
@@ -89,13 +95,16 @@ class Checkout extends Component {
      * @param {string} checkoutTokenId
      */
     fetchShippingCountries(checkoutTokenId) {
-        commerce.services.localeListShippingCountries(checkoutTokenId).then((countries) => {
-            this.setState({
-                shippingCountries: countries.countries,
-            })
-        }).catch((error) => {
-            console.log('There was an error fetching a list of shipping countries', error);
-        });
+        console.log(checkoutTokenId);
+        console.log('rodofoloooo')
+        commerce.services.localeListShippingCountries(checkoutTokenId)
+            .then((countries) => {
+                this.setState({
+                    shippingCountries: countries.countries,
+                })
+            }).catch((error) => {
+                console.log('There was an error fetching a list of shipping countries', error);
+            });
     };
 
     /**
@@ -146,6 +155,7 @@ class Checkout extends Component {
     };
 
     handleShippingCountryChange(e) {
+        console.log(e.target.value)
         const currentValue = e.target.value;
         this.fetchSubdivisions(currentValue);
     };
@@ -231,21 +241,7 @@ class Checkout extends Component {
                             <input className="form-control" id="floatingInputUsername" type="text" onChange={this.handleFormChanges} value={this.state.shippingPostalZipCode} name="shippingPostalZipCode" placeholder="Enter your postal/zip code" required />
                             <label htmlFor="shippingPostalZipCode">Postal/Zip code</label>
                         </div>
-                        <select
-                            value={this.state.shippingCountry}
-                            name="shippingCountry"
-                            onChange={this.handleShippingCountryChange}
-                            className="checkout__select"
-                        >
-                            <option disabled>Country</option>
-                            {
-                                Object.keys(shippingCountries).map((index) => {
-                                    return (
-                                        <option value={index} key={index}>{shippingCountries[index]}</option>
-                                    );
-                                })
-                            };
-                        </select>
+
                         <div className="col-md-6 form-floating mb-3">
                             <select
                                 value={this.state.shippingCountry}
@@ -292,7 +288,7 @@ class Checkout extends Component {
                                 className="form-select"
                             >
                                 <option className="checkout__select-option" disabled>Select a shipping method</option>
-                                {console.log(shippingOptions)}
+
                                 {
                                     shippingOptions.map((method, index) => {
                                         return (
